@@ -9,3 +9,6 @@ class Pet(models.Model):
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
     nickname = models.CharField(max_length=200)
 
+class Wallet(models.Model):
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
+    wallet_id = models.CharField(max_length=75)

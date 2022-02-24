@@ -1,32 +1,18 @@
-from django.http import HttpResponse
-from coinbase.wallet.client import Client
-import requests
+# views.py
+from rest_framework import viewsets
+
+from .serializers import UserSerializer, PetSerializer, WalletSerializer
+from .models import User, Pet, Wallet
 
 
-def index(request):
-    ##client = Client(<api_key>, <api_secret>, api_version='YYYY-MM-DD')
-    url = "https://api.coinstats.app/public/v1/coins?skip=0&limit=5&currency=EUR"
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all().order_by('name')
+    serializer_class = UserSerializer
 
+class PetViewSet(viewsets.ModelViewSet):
+    queryset = Pet.objects.all().order_by('nickname')
+    serializer_class = PetSerializer
 
-    response = requests.request("GET", url, headers={})
-    jsonResponse = response.json()
-
-    dict = {}
-  
-    for coin in range(len(jsonResponse['coins'])):
-       coin_name = jsonResponse['coins'][coin]['id']
-       coin_price = jsonResponse['coins'][coin]['price']
-       coin_1d_change = jsonResponse['coins'][coin]['priceChange1d']
-       dict[coin_name] = {
-            'coin_price' : coin_price,
-            'priceChange1d' : coin_1d_change
-        }
-
-    array = []
-    for key in dict:
-       if(dict[key]['priceChange1d'] < 1):
-           array.append(key + "= :(")
-       else:
-           array.append(key + "= :)")
-
-    return HttpResponse('\n'.join(map(str, array)))
+class WalletViewSet(viewsets.ModelViewSet):
+    queryset = Wallet.objects.all().order_by('user')
+    serializer_class = WalletSerializer
